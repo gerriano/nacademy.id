@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('jurnal')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Base title="Jurnal" description="Tulisan singkat dari Nacademy tentang mengenali stres, kecemasan, dan teknik sederhana untuk hati yang lebih tenang.">
+  <PageIntro
+    eyebrow="Jurnal"
+    title="Bacaan pendek"
+    accent="untuk hari yang panjang."
+    lede="Catatan singkat tentang mengenali diri dan teknik sederhana yang bisa langsung dicoba."
+  />
+  <section class="list">
+    <div class="wrap list__grid" data-reveal="stagger">
+      {posts.map((p) => <ArticleCard href={`/jurnal/${p.id}/`} {...p.data} />)}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .list { padding-bottom: var(--section); }
+  .list__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 1.6vw, 20px); }
+  @media (max-width: 960px) { .list__grid { grid-template-columns: 1fr; } }
+</style>

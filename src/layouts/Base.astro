@@ -1,0 +1,89 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+}
+const {
+  title,
+  description = site.description,
+  image = '/og/default.png',
+  type = 'website',
+  publishedTime,
+} = Astro.props;
+
+const fullTitle = title ? `${title} · Nacademy` : 'Nacademy — Kendalikan stres dan kecemasan';
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogImage = new URL(image, site.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Nacademy',
+  url: site.url,
+  logo: new URL('/favicon.svg', site.url).href,
+  sameAs: [site.instagram],
+  description: site.description,
+};
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#f3f5ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1310" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Nacademy" />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    />
+    <script is:inline>
+      // Keep the page covered until the curtain lifts (avoids a flash between pages).
+      try { if (sessionStorage.getItem('nac-curtain') === '1' && !matchMedia('(prefers-reduced-motion: reduce)').matches) { document.documentElement.classList.add('is-entering'); setTimeout(function () { document.documentElement.classList.remove('is-entering'); }, 2500); } } catch (e) {}
+    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a href="#main" class="sr-only">Lewati ke konten</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <div class="curtain" data-curtain aria-hidden="true"></div>
+    <script>
+      import '../scripts/motion';
+    </script>
+  </body>
+</html>

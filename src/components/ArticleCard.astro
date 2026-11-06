@@ -1,0 +1,54 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  date: Date;
+  readMinutes: number;
+  tone: 'lime' | 'forest' | 'paper';
+}
+const { href, title, excerpt, category, date, readMinutes, tone } = Astro.props;
+const fmt = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<a href={href} class:list={['card', `card--${tone}`]}>
+  <div class="card__top">
+    <span class="card__cat">{category}</span>
+    <span class="card__dot" aria-hidden="true"></span>
+  </div>
+  <h3 class="card__title">{title}</h3>
+  <p class="card__excerpt">{excerpt}</p>
+  <p class="card__meta"><time datetime={date.toISOString()}>{fmt.format(date)}</time> · {readMinutes} menit baca</p>
+</a>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+    padding: clamp(24px, 3vw, 36px);
+    border-radius: var(--radius);
+    text-decoration: none;
+    background: var(--paper-2);
+    color: var(--ink);
+    min-height: 360px;
+    overflow: hidden;
+    transition: transform 0.7s var(--ease);
+  }
+  .card:hover { transform: translateY(-6px); }
+  .card--lime { background: var(--lime); color: var(--on-lime); }
+  .card--forest { background: var(--forest); color: var(--on-forest); }
+  .card__top { display: flex; justify-content: space-between; align-items: center; }
+  .card__cat { font-size: var(--t-label); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.75; }
+  .card__dot {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: currentColor; opacity: 0.12;
+    transition: transform 0.7s var(--ease), opacity 0.3s;
+  }
+  .card:hover .card__dot { transform: scale(1.25); opacity: 0.22; }
+  .card__title { font-size: clamp(1.45rem, 2.2vw, 1.9rem); letter-spacing: -0.03em; line-height: 1.1; margin-top: auto; }
+  .card__excerpt { font-size: 0.95rem; line-height: 1.55; opacity: 0.78; }
+  .card__meta { font-size: var(--t-small); opacity: 0.65; font-variant-numeric: tabular-nums; }
+</style>

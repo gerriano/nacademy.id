@@ -1,0 +1,19 @@
+name = "nacademy-contact"
+main = "src/index.ts"
+compatibility_date = "2025-09-01"
+
+# Email Routing "send_email" binding.
+# destination_address MUST be a verified destination in
+# Cloudflare Dashboard → nacademy.id → Email → Email Routing → Destination addresses.
+[[send_email]]
+name = "MAILER"
+destination_address = "GANTI-DENGAN-EMAIL-TUJUAN@contoh.com"
+
+[vars]
+# Sites allowed to submit the form (staging + production)
+ALLOWED_ORIGINS = "https://nacademy.id,https://www.nacademy.id,https://nacademy-id.vercel.app,http://localhost:4321"
+MAIL_FROM = "form@nacademy.id"
+MAIL_TO = "GANTI-DENGAN-EMAIL-TUJUAN@contoh.com"
+
+# Secret (not stored here):
+#   npx wrangler secret put TURNSTILE_SECRET

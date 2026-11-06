@@ -1,0 +1,197 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import MethodGlyph from '../components/MethodGlyph.astro';
+import { learnings, methods } from '../data/content';
+
+const canControl = ['Cara aku merespons', 'Napasku', 'Kata-kata yang aku pilih', 'Kapan aku istirahat', 'Meminta bantuan'];
+const cannotControl = ['Pendapat orang lain', 'Cuaca', 'Masa lalu', 'Hasil akhir'];
+---
+<Base title="Pendekatan" description="Dari mengenali stres sampai menyusun safety plan: cara Nacademy membantu kamu mengendalikan kecemasan, langkah demi langkah.">
+  <PageIntro
+    eyebrow="Pendekatan"
+    title="Dari mengenali,"
+    accent="sampai mengendalikan."
+    lede="Setiap guidebook Nacademy mengikuti alur yang sama: pahami dulu apa yang terjadi, baru latih cara meredakannya."
+  />
+
+  <!-- The path: real sequence, so it is numbered -->
+  <section class="section path" data-path>
+    <div class="wrap path__grid">
+      <div class="path__aside">
+        <p class="label">Yang akan kamu dapatkan</p>
+        <h2 class="path__title" data-split>Satu alur, <span class="serif">tujuh langkah.</span></h2>
+        <p class="path__tag">Interaktif + Bisa diisi</p>
+      </div>
+      <div class="path__list">
+        <span class="path__rail" aria-hidden="true"><span class="path__fill" data-path-fill></span></span>
+        <ol class="path__steps">
+        {learnings.map((l, i) => (
+          <li class="step" data-step>
+            <span class="step__n">{String(i + 1).padStart(2, '0')}</span>
+            <p class="step__text">{l}</p>
+          </li>
+        ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Circle of control -->
+  <section class="section control band-forest">
+    <div class="wrap control__grid">
+      <div class="control__copy">
+        <p class="label">Memahami “batas kendali”</p>
+        <h2 class="control__title" data-split>Fokus pada lingkaran <span class="serif">yang bisa kamu jangkau.</span></h2>
+        <p class="lede" data-reveal>
+          Banyak kecemasan berasal dari usaha mengendalikan hal yang memang di luar jangkauan.
+          Menggeser fokus ke lingkaran dalam membuat energi kita kembali terpakai dengan baik.
+        </p>
+      </div>
+      <div class="circles" data-circles>
+        <div class="circles__outer">
+          <span class="circles__tag">Di luar kendaliku</span>
+          {cannotControl.map((t, i) => <span class={`chip chip--out c${i}`}>{t}</span>)}
+        </div>
+        <div class="circles__inner">
+          <span class="circles__tag circles__tag--in">Dalam kendaliku</span>
+          {canControl.map((t, i) => <span class={`chip chip--in i${i}`}>{t}</span>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Techniques in depth -->
+  <section class="section techniques">
+    <div class="wrap">
+      <div class="techniques__head">
+        <h2 class="techniques__title" data-split>Ragam teknik meringankan stress</h2>
+        <p class="lede" data-reveal>Tidak ada satu teknik yang cocok untuk semua orang. Coba beberapa, lalu simpan yang paling terasa membantu.</p>
+      </div>
+      <ul class="tlist">
+        {methods.map((m) => (
+          <li class="tech" data-reveal>
+            <MethodGlyph shape={m.shape} />
+            <h3 class="tech__name">{m.name}</h3>
+            <div class="tech__body">
+              <p class="tech__line">{m.line}</p>
+              <p class="tech__detail">{m.detail}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section safety">
+    <div class="wrap safety__inner">
+      <p class="label">Penutup alur</p>
+      <h2 class="safety__title" data-split>7 Days Challenge <span class="serif">&amp; Safety Plan</span></h2>
+      <p class="lede" data-reveal>
+        Tujuh hari latihan kecil yang konsisten, ditutup dengan rencana keselamatan pribadi:
+        siapa yang bisa kamu hubungi, apa yang menenangkanmu, dan langkah apa yang kamu ambil saat hari terasa berat.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .path__grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(40px, 6vw, 96px); align-items: start; }
+  .path__aside { position: sticky; top: 120px; display: grid; gap: 18px; justify-items: start; min-width: 0; }
+  .path__title { font-size: var(--t-2); }
+  .path__title .serif { color: var(--ink-soft); }
+  .path__tag { border: 1.5px solid var(--ink); border-radius: 999px; padding: 0.35em 0.9em; font-weight: 700; font-size: 0.95rem; }
+  .path__list { position: relative; padding-left: 44px; min-width: 0; }
+  .path__steps { list-style: none; margin: 0; padding: 0; display: grid; }
+  .path__rail { position: absolute; left: 11px; top: 14px; bottom: 14px; width: 2px; background: var(--line); }
+  .path__fill { position: absolute; inset: 0; background: var(--lime); transform-origin: top; transform: scaleY(1); }
+  .step { position: relative; display: grid; gap: 6px; padding-block: clamp(22px, 3vw, 36px); border-bottom: 1px solid var(--line); }
+  .step::before {
+    content: ''; position: absolute; left: -40px; top: calc(clamp(22px, 3vw, 36px) + 6px);
+    width: 16px; height: 16px; border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink-soft);
+    transition: background 0.4s, box-shadow 0.4s;
+  }
+  .step.is-on::before { background: var(--lime); box-shadow: inset 0 0 0 2px var(--lime); }
+  .step__n { font-size: var(--t-label); font-weight: 700; letter-spacing: 0.14em; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .step__text { font-family: var(--f-display); font-weight: 700; font-size: var(--t-3); letter-spacing: -0.025em; line-height: 1.25; }
+
+  .control__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px, 6vw, 96px); align-items: center; }
+  .control__copy { display: grid; gap: 22px; min-width: 0; }
+  .control__title { font-size: var(--t-2); }
+  .control__title .serif { color: var(--lime); }
+  .circles { position: relative; width: min(100%, 520px); aspect-ratio: 1; justify-self: center; }
+  .circles__outer, .circles__inner { position: absolute; border-radius: 50%; }
+  .circles__outer { inset: 0; border: 1.5px dashed color-mix(in srgb, var(--on-forest) 35%, transparent); }
+  .circles__inner { inset: 22%; background: var(--lime); color: var(--on-lime); }
+  .circles__tag { position: absolute; left: 50%; top: 5%; transform: translateX(-50%); font-size: var(--t-label); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; opacity: 0.75; }
+  .circles__tag--in { top: 10%; }
+  .chip { position: absolute; font-size: clamp(0.72rem, 1.2vw, 0.9rem); font-weight: 600; padding: 0.35em 0.8em; border-radius: 999px; white-space: nowrap; }
+  .chip--out { background: color-mix(in srgb, var(--on-forest) 12%, transparent); }
+  .chip--in { background: var(--paper); color: var(--ink); }
+  .c0 { left: 2%; top: 30%; } .c1 { right: 0; top: 24%; } .c2 { left: 6%; bottom: 18%; } .c3 { right: 4%; bottom: 14%; }
+  .i0 { left: 50%; top: 26%; transform: translateX(-50%); } .i1 { left: 8%; top: 44%; } .i2 { right: 4%; top: 52%; }
+  .i3 { left: 14%; top: 64%; } .i4 { left: 50%; bottom: 10%; transform: translateX(-50%); }
+
+  .techniques__head { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: end; margin-bottom: clamp(40px, 5vw, 72px); }
+  .techniques__title { font-size: var(--t-2); max-width: 14ch; }
+  .tlist { list-style: none; margin: 0; padding: 0; }
+  .tech {
+    display: grid;
+    grid-template-columns: 96px 1fr 1.4fr;
+    gap: clamp(20px, 3vw, 48px);
+    align-items: start;
+    padding-block: clamp(28px, 3.6vw, 48px);
+    border-top: 1px solid var(--line);
+  }
+  .tech__name { font-size: clamp(1.7rem, 3vw, 2.6rem); letter-spacing: -0.045em; min-width: 0; }
+  .tech__body { display: grid; gap: 10px; min-width: 0; }
+  .tech__line { font-weight: 600; font-size: 1.1rem; }
+  .tech__detail { color: var(--ink-soft); }
+
+  .safety { background: var(--paper-2); }
+  .safety__inner { display: grid; gap: 22px; max-width: 900px; }
+  .safety__title { font-size: var(--t-1); letter-spacing: -0.05em; }
+  .safety__title .serif { color: var(--ink-soft); }
+
+  @media (max-width: 600px) {
+    .circles { aspect-ratio: auto; display: grid; gap: 12px; }
+    .circles__outer, .circles__inner {
+      position: static; inset: auto; border-radius: 24px; padding: 20px;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+    }
+    .circles__inner { order: -1; }
+    .circles__tag, .circles__tag--in { position: static; transform: none; width: 100%; text-align: center; margin-bottom: 4px; }
+    .chip { position: static; transform: none !important; }
+  }
+  @media (max-width: 860px) {
+    .path__grid, .control__grid, .techniques__head { grid-template-columns: 1fr; }
+    .path__aside { position: static; }
+    .tech { grid-template-columns: 64px 1fr; }
+    .tech__body { grid-column: 2; }
+    .tech :global(.glyph) { width: 52px; height: 52px; }
+  }
+</style>
+
+<script>
+  import { motion, onReady } from '../scripts/motion';
+  const { gsap, ScrollTrigger, reduce } = motion;
+  onReady(() => {
+    const steps = document.querySelectorAll<HTMLElement>('[data-step]');
+    if (reduce) { steps.forEach((s) => s.classList.add('is-on')); return; }
+    gsap.fromTo('[data-path-fill]', { scaleY: 0 }, {
+      scaleY: 1, ease: 'none',
+      scrollTrigger: { trigger: '.path__list', start: 'top 60%', end: 'bottom 60%', scrub: true },
+    });
+    steps.forEach((s) => ScrollTrigger.create({
+      trigger: s, start: 'top 62%', onEnter: () => s.classList.add('is-on'), onLeaveBack: () => s.classList.remove('is-on'),
+    }));
+    gsap.from('.chip', {
+      scale: 0, opacity: 0, duration: 0.9, ease: 'back.out(2)', stagger: 0.06,
+      scrollTrigger: { trigger: '[data-circles]', start: 'top 75%', once: true },
+    });
+    gsap.from('.circles__inner', {
+      scale: 0.3, duration: 1.4, ease: 'expo.out',
+      scrollTrigger: { trigger: '[data-circles]', start: 'top 75%', once: true },
+    });
+  });
+</script>

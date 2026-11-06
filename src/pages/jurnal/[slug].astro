@@ -1,0 +1,102 @@
+---
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('jurnal');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post, all: posts } }));
+}
+
+const { post, all } = Astro.props;
+const { Content } = await render(post);
+const fmt = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+const more = all.filter((p) => p.id !== post.id).slice(0, 2);
+---
+<Base title={post.data.title} description={post.data.excerpt} type="article" publishedTime={post.data.date.toISOString()}>
+  <div class="progress" aria-hidden="true"><span data-progress></span></div>
+  <article class="article">
+    <header class="wrap article__head">
+      <a class="link article__back" href="/jurnal/">← Jurnal</a>
+      <p class="label">{post.data.category}</p>
+      <h1 class="article__title" data-split>{post.data.title}</h1>
+      <p class="lede">{post.data.excerpt}</p>
+      <p class="article__meta"><time datetime={post.data.date.toISOString()}>{fmt.format(post.data.date)}</time> · {post.data.readMinutes} menit baca</p>
+    </header>
+    <div class="wrap">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  <section class="section more">
+    <div class="wrap">
+      <h2 class="more__title">Baca juga</h2>
+      <div class="more__grid">
+        {more.map((p) => <ArticleCard href={`/jurnal/${p.id}/`} {...p.data} />)}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .progress { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: 3px; z-index: 55; }
+  .progress span { display: block; height: 100%; background: var(--lime); transform-origin: left; transform: scaleX(0); }
+  .article__head {
+    padding-top: calc(clamp(130px, 16vw, 200px) + env(safe-area-inset-top, 0px));
+    padding-bottom: clamp(40px, 6vw, 72px);
+    display: grid;
+    gap: 20px;
+    max-width: calc(860px + 2 * var(--gutter));
+  }
+  .article__back { justify-self: start; font-size: var(--t-small); }
+  .article__title { font-size: clamp(2.3rem, 5.4vw, 4.6rem); letter-spacing: -0.045em; }
+  .article__meta { font-size: var(--t-small); color: var(--ink-soft); }
+
+  .prose {
+    max-width: 68ch;
+    margin-inline: auto;
+    padding-bottom: clamp(64px, 8vw, 120px);
+    font-size: 1.125rem;
+    line-height: 1.75;
+  }
+  .prose :global(> * + *) { margin-top: 1.1em; }
+  .prose :global(h2) { font-size: clamp(1.5rem, 2.6vw, 2rem); letter-spacing: -0.035em; margin-top: 2em; }
+  .prose :global(p), .prose :global(li) { color: color-mix(in srgb, var(--ink) 86%, transparent); }
+  .prose :global(strong) { color: var(--ink); }
+  .prose :global(ol), .prose :global(ul) { padding-left: 1.3em; }
+  .prose :global(li + li) { margin-top: 0.5em; }
+  .prose :global(li::marker) { color: var(--ink-soft); font-weight: 700; }
+  .prose :global(blockquote) {
+    margin: 2em 0 0;
+    padding: 24px 28px;
+    border-radius: 20px;
+    background: var(--paper-2);
+    font-size: 1rem;
+  }
+  .prose :global(blockquote p) { color: var(--ink-soft); }
+  .prose :global(table) { width: 100%; border-collapse: collapse; font-size: 0.98rem; display: block; overflow-x: auto; }
+  .prose :global(th), .prose :global(td) { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .prose :global(th) { font-size: var(--t-label); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+
+  .more { background: var(--paper-2); }
+  .more__title { font-size: var(--t-2); margin-bottom: 40px; }
+  .more__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .more__grid :global(.card--paper) { background: var(--paper); }
+  @media (max-width: 760px) { .more__grid { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  import { motion } from '../../scripts/motion';
+  const bar = document.querySelector<HTMLElement>('[data-progress]');
+  if (bar) {
+    const update = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      bar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
+    };
+    if (motion.lenis) motion.lenis.on('scroll', update);
+    else addEventListener('scroll', update, { passive: true });
+    update();
+  }
+</script>

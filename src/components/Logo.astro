@@ -1,0 +1,40 @@
+---
+interface Props { size?: 'sm' | 'lg'; class?: string }
+const { size = 'sm', class: cls = '' } = Astro.props;
+---
+<span class:list={['logo', `logo--${size}`, cls]} aria-label="Nacademy">
+  <span class="logo__dot" aria-hidden="true"></span>
+  <span class="logo__word" aria-hidden="true"><span class="logo__n">N</span>academy</span>
+</span>
+
+<style>
+  .logo {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--f-serif);
+    font-weight: 700;
+    font-style: normal;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--ink);
+    isolation: isolate;
+  }
+  .logo--sm { font-size: 1.45rem; }
+  .logo--lg { font-size: clamp(3rem, 14vw, 12rem); }
+  .logo__dot {
+    position: absolute;
+    left: -0.12em;
+    top: 50%;
+    width: 1.22em;
+    height: 1.22em;
+    margin-top: -0.64em;
+    border-radius: 50%;
+    background: var(--lime);
+    z-index: -1;
+    transition: transform 0.6s var(--ease);
+  }
+  .logo__word { position: relative; padding-left: 0.08em; }
+  .logo__n { color: var(--on-lime); }
+  a:hover .logo__dot { transform: scale(1.12); }
+</style>

@@ -1,0 +1,97 @@
+---
+import Logo from './Logo.astro';
+import { nav, site } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr__top">
+      <p class="ftr__big" data-split>
+        Pelan-pelan saja.<br /><span class="serif">Kamu sedang belajar.</span>
+      </p>
+      <a class="btn btn--lime" href="/kontak/" data-magnetic>Sapa kami <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+
+    <div class="ftr__grid">
+      <div class="ftr__col">
+        <a href="/" aria-label="Nacademy — Beranda" style="text-decoration:none"><Logo /></a>
+        <p class="ftr__note">Guidebook interaktif ala infografis untuk mengenali dan mengendalikan stres serta kecemasan.</p>
+      </div>
+      <nav class="ftr__col" aria-label="Footer">
+        <p class="label">Jelajahi</p>
+        <ul>
+          {nav.map((n) => <li><a class="link" href={n.href}>{n.label}</a></li>)}
+        </ul>
+      </nav>
+      <div class="ftr__col">
+        <p class="label">Ikuti</p>
+        <ul>
+          <li><a class="link" href={site.instagram} target="_blank" rel="noopener">Instagram {site.instagramHandle}</a></li>
+        </ul>
+      </div>
+      <div class="ftr__col">
+        <p class="label">Catatan penting</p>
+        <p class="ftr__note">
+          Konten Nacademy bersifat edukatif dan bukan pengganti diagnosis atau terapi profesional.
+          Jika kamu dalam kondisi darurat, hubungi layanan <strong>SEJIWA 119 ext. 8</strong> atau fasilitas kesehatan terdekat.
+        </p>
+      </div>
+    </div>
+
+    <div class="ftr__base">
+      <span>© {year} Nacademy</span>
+      <span>Dibuat dengan tenang di Indonesia</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ftr {
+    border-top: 1px solid var(--line);
+    padding-top: clamp(80px, 12vw, 160px);
+    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+  }
+  .ftr__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    padding-bottom: clamp(64px, 9vw, 120px);
+  }
+  .ftr__big {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: var(--t-1);
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+  .ftr__big .serif { font-weight: 400; color: var(--ink-soft); }
+  .ftr__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.6fr;
+    gap: 40px;
+    padding-block: 48px;
+    border-top: 1px solid var(--line);
+  }
+  .ftr__col { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+  .ftr__col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .ftr__note { font-size: var(--t-small); color: var(--ink-soft); line-height: 1.6; max-width: 40ch; }
+  .ftr__note strong { color: var(--ink); }
+  .ftr__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: var(--t-small);
+    color: var(--ink-soft);
+  }
+  @media (max-width: 860px) {
+    .ftr__grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 520px) {
+    .ftr__grid { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,102 @@
+---
+import { affirmations } from '../data/content';
+const first = affirmations[1];
+---
+<div class="deck" data-deck>
+  <div class="deck__stack" aria-hidden="true">
+    <span class="deck__ghost g2"></span>
+    <span class="deck__ghost g1"></span>
+  </div>
+  <figure class="deck__card" data-deck-card aria-live="polite">
+    <span class="deck__brand">Nacademy · Affirmation card deck</span>
+    <span class="deck__flower" aria-hidden="true"></span>
+    <blockquote class="deck__text" data-deck-text>{first.id}</blockquote>
+    <figcaption class="deck__en" data-deck-en>{first.en ?? ''}</figcaption>
+  </figure>
+  <button class="btn btn--lime deck__btn" type="button" data-deck-next data-magnetic>
+    Ambil kartu acak <span class="arrow" aria-hidden="true">↻</span>
+  </button>
+  <script type="application/json" data-deck-data set:html={JSON.stringify(affirmations)} />
+</div>
+
+<style>
+  .deck { display: grid; justify-items: center; gap: 36px; }
+  .deck__stack, .deck__card { grid-area: 1 / 1; }
+  .deck__stack { position: relative; width: min(360px, 82vw); aspect-ratio: 3 / 4; }
+  .deck__ghost {
+    position: absolute; inset: 0; border-radius: 22px;
+    background: #f6ece1; box-shadow: 0 1px 0 rgb(0 0 0 / 0.05);
+  }
+  .g1 { transform: rotate(-5deg) translate(-10px, 8px); opacity: 0.8; }
+  .g2 { transform: rotate(6deg) translate(12px, 12px); opacity: 0.55; }
+  .deck__card {
+    margin: 0;
+    width: min(360px, 82vw);
+    aspect-ratio: 3 / 4;
+    border-radius: 22px;
+    background: #fbf3ea;
+    color: #3a3a36;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 18px;
+    padding: 36px 30px;
+    position: relative;
+    box-shadow: 0 40px 80px -30px rgb(15 29 22 / 0.5);
+    transform-style: preserve-3d;
+  }
+  .deck__brand {
+    position: absolute; top: 20px; left: 0; right: 0;
+    font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.55;
+  }
+  .deck__flower {
+    width: 64px; height: 64px; border-radius: 50%;
+    background:
+      radial-gradient(circle, #f2c94c 0 22%, transparent 23%),
+      conic-gradient(from 0deg, #b9a7e8 0 20deg, transparent 20deg 40deg, #b9a7e8 40deg 60deg, transparent 60deg 80deg,
+        #b9a7e8 80deg 100deg, transparent 100deg 120deg, #b9a7e8 120deg 140deg, transparent 140deg 160deg,
+        #b9a7e8 160deg 180deg, transparent 180deg 200deg, #b9a7e8 200deg 220deg, transparent 220deg 240deg,
+        #b9a7e8 240deg 260deg, transparent 260deg 280deg, #b9a7e8 280deg 300deg, transparent 300deg 320deg,
+        #b9a7e8 320deg 340deg, transparent 340deg);
+    -webkit-mask: radial-gradient(circle, #000 64%, transparent 66%);
+            mask: radial-gradient(circle, #000 64%, transparent 66%);
+  }
+  .deck__text {
+    margin: 0;
+    font-family: var(--f-serif);
+    font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .deck__en { font-family: var(--f-serif); font-style: italic; font-size: 1.1rem; min-height: 1.4em; }
+</style>
+
+<script>
+  import { motion } from '../scripts/motion';
+  const { gsap, reduce } = motion;
+  document.querySelectorAll<HTMLElement>('[data-deck]').forEach((deck) => {
+    const data = JSON.parse(deck.querySelector('[data-deck-data]')!.textContent || '[]') as { id: string; en?: string }[];
+    const card = deck.querySelector<HTMLElement>('[data-deck-card]')!;
+    const text = deck.querySelector<HTMLElement>('[data-deck-text]')!;
+    const en = deck.querySelector<HTMLElement>('[data-deck-en]')!;
+    let current = 1;
+    let busy = false;
+    deck.querySelector('[data-deck-next]')!.addEventListener('click', () => {
+      if (busy) return;
+      let next = current;
+      while (next === current) next = Math.floor(Math.random() * data.length);
+      current = next;
+      const swap = () => { text.textContent = data[next].id; en.textContent = data[next].en ?? ''; };
+      if (reduce) return swap();
+      busy = true;
+      gsap.timeline({ onComplete: () => { busy = false; } })
+        .to(card, { rotateY: 90, y: -16, duration: 0.35, ease: 'power2.in' })
+        .add(swap)
+        .set(card, { rotateY: -90 })
+        .to(card, { rotateY: 0, y: 0, duration: 0.7, ease: 'expo.out' });
+    });
+  });
+</script>

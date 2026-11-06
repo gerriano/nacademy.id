@@ -1,0 +1,154 @@
+---
+/**
+ * Covers are drawn in HTML/CSS (no raw cover files were provided), modelled
+ * on the mockups in the Instagram slides. Swap for real cover art later by
+ * passing `img`.
+ */
+interface Props { cover: 'first-aid' | 'life-audit' | 'clue-card'; img?: string; class?: string }
+const { cover, img, class: cls = '' } = Astro.props;
+---
+<div class:list={['book', `book--${cover}`, cls]} data-tilt>
+  <div class="book__inner">
+    <div class="book__spine" aria-hidden="true"></div>
+    <div class="book__face">
+      {img ? <img src={img} alt="" loading="lazy" /> : null}
+      {!img && cover === 'first-aid' && (
+        <>
+          <span class="book__brand">Nacademy</span>
+          <span class="book__title">First Aid</span>
+          <span class="book__sub">For Stress &amp; Anxiety</span>
+          <span class="book__kind">Guidebook</span>
+          <span class="fa-art" aria-hidden="true">
+            <span class="fa-stone s1"></span><span class="fa-stone s2"></span><span class="fa-stone s3"></span>
+          </span>
+        </>
+      )}
+      {!img && cover === 'life-audit' && (
+        <>
+          <span class="book__title">Life Audit<br />Wheel</span>
+          <span class="book__sub">Guidebook ini akan memandu kamu mengevaluasi beberapa aspek penting dalam hidupmu</span>
+          <span class="la-wheel" aria-hidden="true"></span>
+        </>
+      )}
+      {!img && cover === 'clue-card' && (
+        <>
+          <span class="book__brand">Nacademy</span>
+          <span class="book__title">The<br />Anxiety<br />Clue Card</span>
+          <span class="book__kind">Deck kartu afirmasi</span>
+          <svg class="cc-cup" viewBox="0 0 120 80" aria-hidden="true">
+            <ellipse cx="55" cy="30" rx="42" ry="9" fill="#e8a54b" stroke="#6b4f3a" stroke-width="1.6" />
+            <path d="M13 30 Q15 70 55 72 Q95 70 97 30" fill="#fbf6ee" stroke="#6b4f3a" stroke-width="1.6" />
+            <path d="M96 38 Q114 38 108 52 Q103 60 90 58" fill="none" stroke="#6b4f3a" stroke-width="1.6" />
+            <ellipse cx="55" cy="76" rx="50" ry="4" fill="none" stroke="#6b4f3a" stroke-width="1.2" />
+          </svg>
+        </>
+      )}
+    </div>
+  </div>
+</div>
+
+<style>
+  .book {
+    --w: 240px;
+    width: var(--w);
+    max-width: 100%;
+    aspect-ratio: 3 / 4.1;
+    perspective: 1200px;
+  }
+  .book__inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateY(-18deg) rotateX(4deg);
+    transition: transform 0.9s var(--ease);
+  }
+  .book:hover .book__inner { transform: rotateY(-6deg) rotateX(2deg) translateZ(20px); }
+  .book__face {
+    position: absolute;
+    inset: 0;
+    border-radius: 3px 10px 10px 3px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 9% 10%;
+    gap: 4px;
+    box-shadow:
+      inset 6px 0 10px -6px rgb(0 0 0 / 0.35),
+      0 30px 60px -20px rgb(15 29 22 / 0.45),
+      0 10px 20px -10px rgb(15 29 22 / 0.3);
+    transform: translateZ(14px);
+  }
+  .book__face img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .book__spine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 28px;
+    transform-origin: left;
+    transform: rotateY(90deg) translateZ(0) translateX(-14px);
+    filter: brightness(0.75);
+  }
+  .book__brand { font-family: var(--f-serif); font-weight: 700; font-size: 0.62rem; opacity: 0.85; }
+  .book__title { font-family: var(--f-serif); font-weight: 500; line-height: 0.95; letter-spacing: -0.02em; }
+  .book__sub { font-family: var(--f-serif); font-size: 0.78rem; line-height: 1.2; }
+  .book__kind { font-size: 0.56rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; }
+
+  /* First Aid */
+  .book--first-aid .book__face, .book--first-aid .book__spine { background: #1d4a35; color: #f1df93; }
+  .book--first-aid .book__title { font-size: calc(var(--w) * 0.2); margin-top: 6%; }
+  .book--first-aid .book__sub { color: #f1df93; }
+  .book--first-aid .book__brand, .book--first-aid .book__kind { color: #e9efe6; }
+  .fa-art {
+    position: relative;
+    margin-top: auto;
+    width: 100%;
+    height: 44%;
+    border-radius: 4px;
+    background: radial-gradient(120% 60% at 50% 100%, #d9c39f, #c9ad83 60%, #b89a6e);
+    overflow: hidden;
+  }
+  .fa-art::before { /* raked sand */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-radial-gradient(ellipse at 50% 110%, transparent 0 7px, rgb(255 255 255 / 0.18) 7px 8px);
+  }
+  .fa-stone { position: absolute; left: 50%; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #efe6d8, #b7a68c 70%); }
+  .fa-stone.s1 { width: 46%; height: 22%; bottom: 14%; margin-left: -23%; }
+  .fa-stone.s2 { width: 34%; height: 18%; bottom: 33%; margin-left: -17%; }
+  .fa-stone.s3 { width: 22%; height: 14%; bottom: 49%; margin-left: -11%; }
+
+  /* Life Audit Wheel */
+  .book--life-audit .book__face, .book--life-audit .book__spine { background: #e8dfd0; color: #5a4430; }
+  .book--life-audit .book__title { font-size: calc(var(--w) * 0.13); margin-top: 14%; }
+  .book--life-audit .book__sub { font-family: var(--f-body); font-size: 0.5rem; max-width: 26ch; margin-top: 6px; opacity: 0.8; }
+  .la-wheel {
+    margin-top: auto;
+    width: 58%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, #e8dfd0 0 12%, transparent 13%),
+      repeating-conic-gradient(from 0deg, #5a4430 0 0.6deg, transparent 0.6deg 40deg),
+      radial-gradient(circle, transparent 0 30%, rgb(90 68 48 / 0.25) 30.5% 31%, transparent 31.5% 55%, rgb(90 68 48 / 0.25) 55.5% 56%, transparent 56.5%),
+      conic-gradient(#b8d98a 0 120deg, #d8ecb8 120deg 200deg, #9cc66d 200deg 280deg, #cfe6a8 280deg);
+    box-shadow: 0 0 0 1px rgb(90 68 48 / 0.4);
+  }
+
+  /* Clue Card */
+  .book--clue-card { aspect-ratio: 3 / 4.6; }
+  .book--clue-card .book__face, .book--clue-card .book__spine { background: #fbf3ea; color: #3f3f3f; }
+  .book--clue-card .book__face { border-radius: 12px; outline: 1px solid rgb(63 63 63 / 0.15); outline-offset: -8px; }
+  .book--clue-card .book__spine { width: 6px; }
+  .book--clue-card .book__title { font-size: calc(var(--w) * 0.12); text-transform: uppercase; font-weight: 400; margin-top: 10%; letter-spacing: 0; }
+  .book--clue-card .book__kind { margin-top: 8px; font-size: 0.5rem; }
+  .cc-cup { margin-top: auto; width: 70%; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .book__inner { transition: none; }
+  }
+</style>

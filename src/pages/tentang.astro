@@ -1,0 +1,136 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+
+const values = [
+  { k: 'Berbasis ilmu', v: 'Dikompilasi dari buku, saran psikolog & praktisi healing. Setiap teknik yang kami ajarkan punya alasan, bukan sekadar kata-kata manis.' },
+  { k: 'Tidak membosankan', v: 'Desain infografis, pasti gak bikin kamu bosan! Ilmu yang berat kami pecah jadi visual yang mudah dicerna dan bisa langsung diisi.' },
+  { k: 'Untuk semua', v: 'Cocok untuk semua umur dan gender. Bahasa kami sederhana, hangat, dan tidak menghakimi.' },
+  { k: 'Selalu dekat', v: 'Bisa pakai HP / Laptop, atau dicetak. Belajar bisa dimulai di sela istirahat siang atau sebelum tidur.' },
+];
+---
+<Base title="Tentang" description="Nacademy membuat guidebook infografis interaktif agar siapa pun bisa belajar mengenali dan mengendalikan stres serta kecemasan.">
+  <PageIntro
+    eyebrow="Tentang Nacademy"
+    title="Pertolongan pertama untuk hati,"
+    accent="yang bisa dipelajari siapa saja."
+    lede="Nacademy adalah ruang belajar kesehatan mental dalam format guidebook infografis yang interaktif dan bisa diisi."
+  />
+
+  <section class="story">
+    <div class="wrap story__grid">
+      <div class="story__mark" aria-hidden="true">
+        <span class="story__dot" data-parallax="0.25"></span>
+      </div>
+      <div class="story__copy">
+        <p class="label">Cerita kami</p>
+        <p class="story__text" data-scrub-text>
+          Nacademy lahir dari satu pertanyaan sederhana: kenapa belajar mengelola emosi terasa begitu jauh?
+          Ilmunya ada di buku tebal, di ruang praktik yang belum tentu terjangkau, atau tersebar di internet tanpa arah.
+          Kami ingin mendekatkannya. Ringkas, terarah, dan cukup seru untuk benar-benar dipakai.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section quote band-forest">
+    <div class="wrap quote__inner">
+      <p class="quote__small" data-reveal>Sebelum mencoba terapi<br /><strong>yang lebih mahal</strong></p>
+      <p class="quote__big" data-split>Guidebook ini bisa jadi alternatif <strong>pertolongan pertama</strong></p>
+      <p class="quote__note" data-reveal>
+        Pertolongan pertama artinya langkah awal. Untuk kondisi yang berat atau berlangsung lama,
+        pendampingan psikolog atau psikiater tetap jadi pilihan terbaik.
+      </p>
+    </div>
+  </section>
+
+  <section class="section values">
+    <div class="wrap">
+      <h2 class="values__title" data-split>Yang kami pegang</h2>
+      <dl class="values__grid">
+        {values.map((item) => (
+          <div class="value" data-reveal>
+            <dt>{item.k}</dt>
+            <dd>{item.v}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="section honest">
+    <div class="wrap honest__grid">
+      <div>
+        <p class="label">Supaya jelas</p>
+        <h2 class="honest__title" data-split>Apa itu Nacademy, <span class="serif">dan apa yang bukan.</span></h2>
+      </div>
+      <div class="honest__cols" data-reveal="stagger">
+        <div class="honest__col">
+          <h3>Nacademy adalah</h3>
+          <ul>
+            <li>Materi edukasi untuk mengenali stres dan kecemasan</li>
+            <li>Latihan mandiri yang bisa kamu isi sendiri</li>
+            <li>Teman belajar yang menemani langkah awal</li>
+          </ul>
+        </div>
+        <div class="honest__col honest__col--not">
+          <h3>Nacademy bukan</h3>
+          <ul>
+            <li>Alat diagnosis gangguan mental</li>
+            <li>Pengganti konseling atau terapi profesional</li>
+            <li>Layanan darurat. Untuk kondisi krisis, hubungi SEJIWA 119 ext. 8</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cta">
+    <div class="wrap cta__inner">
+      <h2 class="cta__title" data-split>Ingin berkolaborasi atau sekadar menyapa?</h2>
+      <a class="btn btn--lime" href="/kontak/" data-magnetic>Hubungi kami <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .story__grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: clamp(40px, 6vw, 96px); align-items: center; padding-bottom: var(--section); }
+  .story__mark { aspect-ratio: 1; border-radius: var(--radius); background: var(--paper-2); display: grid; place-items: center; overflow: hidden; }
+  .story__dot { width: 46%; aspect-ratio: 1; border-radius: 50%; background: var(--lime); }
+  .story__copy { display: grid; gap: 24px; min-width: 0; }
+  .story__text { font-family: var(--f-display); font-weight: 700; font-size: var(--t-2); letter-spacing: -0.035em; line-height: 1.15; }
+
+  .quote__inner { display: grid; gap: clamp(20px, 3vw, 36px); max-width: 980px; }
+  .quote__small { font-size: var(--t-3); line-height: 1.35; color: color-mix(in srgb, var(--on-forest) 75%, transparent); }
+  .quote__small strong { color: var(--on-forest); }
+  .quote__big { font-family: var(--f-display); font-weight: 400; font-size: var(--t-1); letter-spacing: -0.045em; line-height: 1.02; }
+  .quote__big strong { font-weight: 800; color: var(--lime); }
+  .quote__note { max-width: 52ch; color: color-mix(in srgb, var(--on-forest) 72%, transparent); }
+
+  .values__title { font-size: var(--t-2); margin-bottom: clamp(40px, 5vw, 72px); }
+  .values__grid { margin: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 clamp(32px, 5vw, 80px); }
+  .value { border-top: 1px solid var(--line); padding-block: clamp(24px, 3vw, 40px); display: grid; gap: 12px; min-width: 0; }
+  .value dt { font-family: var(--f-display); font-weight: 800; font-size: var(--t-3); letter-spacing: -0.03em; }
+  .value dd { margin: 0; color: var(--ink-soft); max-width: 46ch; }
+
+  .honest { background: var(--paper-2); }
+  .honest__grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: clamp(40px, 6vw, 96px); align-items: start; }
+  .honest__title { font-size: var(--t-2); margin-top: 16px; }
+  .honest__title .serif { color: var(--ink-soft); }
+  .honest__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .honest__col { background: var(--paper); border-radius: var(--radius); padding: clamp(24px, 3vw, 36px); display: grid; gap: 16px; align-content: start; min-width: 0; }
+  .honest__col h3 { font-size: 1.25rem; letter-spacing: -0.02em; }
+  .honest__col ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+  .honest__col li { padding-left: 26px; position: relative; color: var(--ink-soft); line-height: 1.5; }
+  .honest__col li::before { content: ''; position: absolute; left: 0; top: 0.45em; width: 12px; height: 12px; border-radius: 50%; background: var(--lime); }
+  .honest__col--not li::before { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink-soft); }
+
+  .cta__inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 32px; }
+  .cta__title { font-size: var(--t-2); max-width: 18ch; }
+
+  @media (max-width: 860px) {
+    .story__grid, .honest__grid { grid-template-columns: 1fr; }
+    .story__mark { max-width: 360px; }
+    .values__grid, .honest__cols { grid-template-columns: 1fr; }
+  }
+</style>

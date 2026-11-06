@@ -1,0 +1,177 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { site } from '../data/site';
+const endpoint = site.formEndpoint;
+const siteKey = site.turnstileSiteKey;
+---
+<Base title="Kontak" description="Hubungi Nacademy untuk pertanyaan, kolaborasi, atau sekadar menyapa.">
+  {siteKey && <script is:inline slot="head" src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+
+  <PageIntro
+    eyebrow="Kontak"
+    title="Ceritakan,"
+    accent="kami mendengarkan."
+    lede="Pertanyaan, ide kolaborasi, atau masukan untuk Nacademy. Kami membalas lewat email dalam 1–2 hari kerja."
+  />
+
+  <section class="contact">
+    <div class="wrap contact__grid">
+      <form class="form" data-form data-endpoint={endpoint} novalidate>
+        <div class="field">
+          <label for="f-name">Nama</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="120" placeholder="Nama kamu" />
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="200" placeholder="nama@email.com" />
+        </div>
+        <fieldset class="field field--topics">
+          <legend>Topik</legend>
+          <div class="topics">
+            {['Pertanyaan umum', 'Kolaborasi', 'Media', 'Masukan'].map((t, i) => (
+              <label class="topic">
+                <input type="radio" name="topic" value={t} id={`f-topic-${i}`} checked={i === 0} />
+                <span>{t}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <div class="field">
+          <label for="f-message">Pesan</label>
+          <textarea id="f-message" name="message" rows="6" required maxlength="4000" placeholder="Tulis pesanmu di sini"></textarea>
+        </div>
+        <div class="hp" aria-hidden="true">
+          <label for="f-website">Website</label>
+          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        {siteKey && <div class="cf-turnstile" data-sitekey={siteKey} data-theme="auto" data-language="id"></div>}
+        <div class="form__foot">
+          <button class="btn btn--lime" type="submit" data-submit>Kirim pesan <span class="arrow" aria-hidden="true">→</span></button>
+          <p class="form__status" data-status role="status" aria-live="polite"></p>
+        </div>
+      </form>
+
+      <aside class="side">
+        <div class="side__block">
+          <p class="label">Instagram</p>
+          <a class="side__big link" href={site.instagram} target="_blank" rel="noopener">{site.instagramHandle}</a>
+          <p class="side__note">Konten harian seputar stres, kecemasan, dan pengembangan diri.</p>
+        </div>
+        <div class="side__block side__block--care">
+          <p class="label">Butuh bantuan segera?</p>
+          <p>
+            Nacademy bukan layanan darurat. Jika kamu atau orang terdekat berada dalam bahaya atau krisis,
+            hubungi <strong>SEJIWA 119 ext. 8</strong>, <strong>112</strong>, atau datang ke IGD rumah sakit terdekat.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact { padding-bottom: var(--section); }
+  .contact__grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(48px, 7vw, 120px); align-items: start; }
+  .form { display: grid; gap: 28px; min-width: 0; }
+  .field { display: grid; gap: 10px; border: 0; margin: 0; padding: 0; min-width: 0; }
+  .field label, .field legend { font-weight: 600; font-size: 0.95rem; padding: 0; }
+  .field input, .field textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 1.15rem;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-bottom: 1.5px solid var(--line);
+    padding: 10px 0 14px;
+    border-radius: 0;
+    transition: border-color 0.3s;
+    resize: vertical;
+  }
+  .field input::placeholder, .field textarea::placeholder { color: color-mix(in srgb, var(--ink-soft) 60%, transparent); }
+  .field input:focus, .field textarea:focus { outline: none; border-bottom-color: var(--ink); }
+  .field [aria-invalid='true'] { border-bottom-color: #c2410c; }
+  .topics { display: flex; flex-wrap: wrap; gap: 8px; }
+  .topic input { position: absolute; opacity: 0; pointer-events: none; }
+  .topic span {
+    display: inline-block; padding: 0.55em 1.1em; border-radius: 999px; cursor: pointer;
+    box-shadow: inset 0 0 0 1.5px var(--line); font-weight: 600; font-size: 0.95rem;
+    transition: background 0.3s, box-shadow 0.3s, color 0.3s;
+  }
+  .topic input:checked + span { background: var(--ink); color: var(--paper); box-shadow: none; }
+  .topic input:focus-visible + span { outline: 2px solid var(--lime); outline-offset: 3px; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .form__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+  .form__status { font-weight: 600; min-height: 1.5em; }
+  .form__status.is-ok { color: var(--forest); }
+  .form__status.is-err { color: #c2410c; }
+
+  .side { display: grid; gap: 16px; min-width: 0; }
+  .side__block { background: var(--paper-2); border-radius: var(--radius); padding: clamp(24px, 3vw, 36px); display: grid; gap: 12px; }
+  .side__big { font-family: var(--f-display); font-weight: 800; font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -0.04em; justify-self: start; overflow-wrap: anywhere; }
+  .side__note { color: var(--ink-soft); }
+  .side__block--care { background: var(--forest); color: var(--on-forest); }
+  .side__block--care .label { color: color-mix(in srgb, var(--on-forest) 70%, transparent); }
+  .side__block--care strong { color: var(--lime); }
+
+  @media (max-width: 860px) { .contact__grid { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+  if (form) {
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const endpoint = form.dataset.endpoint || '';
+    const say = (msg: string, kind: 'ok' | 'err' | '' = '') => {
+      status.textContent = msg;
+      status.className = 'form__status' + (kind ? ` is-${kind}` : '');
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const required: Array<[string, string]> = [['name', 'Nama'], ['email', 'Email'], ['message', 'Pesan']];
+      let firstBad: HTMLElement | null = null;
+      for (const [key] of required) {
+        const el = form.elements.namedItem(key) as HTMLInputElement;
+        const bad = !String(fd.get(key) || '').trim() || (key === 'email' && !el.checkValidity());
+        el.setAttribute('aria-invalid', String(bad));
+        if (bad && !firstBad) firstBad = el;
+      }
+      if (firstBad) {
+        say('Lengkapi nama, email yang valid, dan pesanmu dulu ya.', 'err');
+        firstBad.focus();
+        return;
+      }
+      if (!endpoint) {
+        say('Form belum tersambung ke server (staging). Sementara, sapa kami lewat Instagram.', 'err');
+        return;
+      }
+      const token = String(fd.get('cf-turnstile-response') || '');
+      submit.disabled = true;
+      say('Mengirim…');
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: fd.get('name'), email: fd.get('email'), topic: fd.get('topic'),
+            message: fd.get('message'), website: fd.get('website'), token,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Gagal mengirim');
+        form.reset();
+        say('Terkirim. Terima kasih, kami akan membalas lewat email.', 'ok');
+        (window as any).turnstile?.reset?.();
+      } catch (err) {
+        say(`Pesan belum terkirim: ${(err as Error).message}. Coba lagi sebentar lagi.`, 'err');
+        (window as any).turnstile?.reset?.();
+      } finally {
+        submit.disabled = false;
+      }
+    });
+  }
+</script>

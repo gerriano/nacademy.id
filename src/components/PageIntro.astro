@@ -1,0 +1,27 @@
+---
+/** Opening block for inner pages: eyebrow, oversized title, lede. */
+interface Props { eyebrow: string; title: string; accent?: string; lede?: string }
+const { eyebrow, title, accent, lede } = Astro.props;
+---
+<section class="intro wrap">
+  <p class="label intro__eyebrow"><span class="dot" aria-hidden="true"></span> {eyebrow}</p>
+  <h1 class="intro__title" data-split>
+    {title}{accent && <> <span class="serif">{accent}</span></>}
+  </h1>
+  {lede && <p class="lede intro__lede" data-reveal>{lede}</p>}
+  <slot />
+</section>
+
+<style>
+  .intro {
+    padding-top: calc(clamp(140px, 18vw, 220px) + env(safe-area-inset-top, 0px));
+    padding-bottom: clamp(56px, 8vw, 110px);
+    display: grid;
+    gap: clamp(20px, 3vw, 36px);
+  }
+  .intro__eyebrow { display: flex; align-items: center; gap: 10px; }
+  .intro__eyebrow .dot { width: 10px; height: 10px; }
+  .intro__title { font-size: var(--t-1); max-width: 16ch; letter-spacing: -0.045em; }
+  .intro__title .serif { font-weight: 400; color: var(--ink-soft); }
+  .intro__lede { max-width: 40ch; }
+</style>

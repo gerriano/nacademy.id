@@ -1,0 +1,92 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import BookCover from '../components/BookCover.astro';
+import { works } from '../data/content';
+---
+<Base title="Karya" description="First Aid For Stress & Anxiety, Life Audit Wheel, dan The Anxiety Clue Card: guidebook infografis interaktif dari Nacademy.">
+  <PageIntro
+    eyebrow="Karya"
+    title="Guidebook ala infografis"
+    accent="dan tidak membosankan."
+    lede="Total 60++ halaman infografis, editable di hp/laptop & printable."
+  />
+
+  {works.map((w, i) => (
+    <section class:list={['work', { 'work--alt': i % 2 === 1, 'band-forest': i === 0 }]} id={w.slug}>
+      <div class="wrap work__grid">
+        <div class="work__stage" data-reveal>
+          <BookCover cover={w.cover} class="work__book" />
+        </div>
+        <div class="work__copy">
+          <p class="label">{w.kind}</p>
+          <h2 class="work__title" data-split>{w.title}</h2>
+          <p class="work__summary" data-reveal>{w.summary}</p>
+          <p class="work__body" data-reveal>{w.body}</p>
+          <ul class="work__points" data-reveal="stagger">
+            {w.points.map((p) => <li>{p}</li>)}
+          </ul>
+          <p class="work__soon" data-reveal><span class="dot" aria-hidden="true"></span> Segera tersedia di nacademy.id</p>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="section ask">
+    <div class="wrap ask__inner">
+      <h2 class="ask__title" data-split>Ada pertanyaan tentang isi guidebook?</h2>
+      <a class="btn" href="/kontak/" data-magnetic>Tanyakan pada kami <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .work { padding-block: clamp(96px, 12vw, 160px); }
+  .work__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px, 7vw, 120px); align-items: center; }
+  .work--alt .work__stage { order: 2; }
+  .work__stage {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border-radius: var(--radius);
+    background: var(--paper-2);
+    min-width: 0;
+  }
+  .band-forest .work__stage { background: color-mix(in srgb, var(--on-forest) 7%, transparent); }
+  .work__stage :global(.work__book) { --w: clamp(180px, 22vw, 300px); }
+  .work__copy { display: grid; gap: 20px; justify-items: start; min-width: 0; }
+  .work__title { font-size: var(--t-2); }
+  .work__summary { font-family: var(--f-serif); font-style: italic; font-size: var(--t-3); line-height: 1.35; }
+  .band-forest .work__summary { color: var(--lime); }
+  .work__body { color: var(--ink-soft); max-width: 50ch; }
+  .band-forest .work__body { color: color-mix(in srgb, var(--on-forest) 75%, transparent); }
+  .work__points { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .work__points li { border: 1.5px solid var(--line); border-radius: 999px; padding: 0.4em 0.95em; font-size: 0.9rem; font-weight: 600; }
+  .band-forest .work__points li { border-color: color-mix(in srgb, var(--on-forest) 25%, transparent); }
+  .work__soon { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.95rem; }
+  .work__soon .dot { width: 10px; height: 10px; }
+
+  .ask { border-top: 1px solid var(--line); }
+  .ask__inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 32px; }
+  .ask__title { font-size: var(--t-2); max-width: 16ch; }
+
+  @media (max-width: 860px) {
+    .work__grid { grid-template-columns: 1fr; }
+    .work--alt .work__stage { order: 0; }
+  }
+</style>
+
+<script>
+  import { motion, onReady } from '../scripts/motion';
+  const { gsap, reduce } = motion;
+  onReady(() => {
+    if (reduce) return;
+    // Books turn toward the reader as their section scrolls through
+    document.querySelectorAll<HTMLElement>('.work__stage .book__inner').forEach((el) => {
+      gsap.fromTo(el, { rotateY: -40, rotateX: 10 }, {
+        rotateY: 10, rotateX: -2, ease: 'none',
+        scrollTrigger: { trigger: el.closest('.work'), start: 'top bottom', end: 'bottom top', scrub: 1 },
+      });
+    });
+  });
+</script>

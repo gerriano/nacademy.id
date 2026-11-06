@@ -1,0 +1,563 @@
+---
+import Base from '../layouts/Base.astro';
+import BookCover from '../components/BookCover.astro';
+import MethodGlyph from '../components/MethodGlyph.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import AffirmationDeck from '../components/AffirmationDeck.astro';
+import { pillars, methods, formats, slides } from '../data/content';
+import { site } from '../data/site';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('jurnal')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3);
+const rowA = slides.slice(0, 3);
+const rowB = slides.slice(3);
+const repeat = <T,>(a: T[]) => [...a, ...a, ...a, ...a];
+---
+<Base>
+  <!-- 1. Hero: the breathing dot -->
+  <section class="hero" data-hero>
+    <div class="hero__stage" data-hero-stage>
+      <div class="wrap hero__grid">
+        <div class="hero__copy" data-hero-copy>
+          <p class="label hero__eyebrow">Nacademy · Guidebook interaktif</p>
+          <h1 class="hero__title">
+            <span class="reveal-line"><span>Kendalikan</span></span>
+            <span class="reveal-line"><span>Stres dan</span></span>
+            <span class="reveal-line"><span>Kecemasan</span></span>
+          </h1>
+          <p class="hero__pill" data-hero-pill>Dengan metode yang seru!</p>
+        </div>
+
+        <div class="hero__orbwrap" data-orb-scale>
+          <button class="orb" type="button" data-orb aria-label="Latihan napas: tarik napas 4 hitungan, tahan 4, hembuskan 6">
+            <span class="orb__ring" aria-hidden="true"></span>
+            <span class="orb__core" data-orb-core aria-hidden="true"></span>
+            <span class="orb__label">
+              <span class="orb__phase" data-orb-phase>Tarik napas</span>
+              <span class="orb__count" data-orb-count>4</span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <p class="hero__hint label" data-hero-hint>Bernapas bersama bulatan ini, lalu gulir perlahan</p>
+    </div>
+  </section>
+
+  <!-- 2. You are not alone (IG slide 05) -->
+  <section class="alone">
+    <div class="wrap alone__grid">
+      <div class="alone__copy">
+        <h2 class="alone__title" data-split>Stress &amp; Cemas, Bikin Gak Tenang?</h2>
+        <p class="alone__text" data-reveal>
+          Tenang, Kamu gak sendirian, menurut WHO <strong>4% dari populasi global atau 301 juta orang mengalami gangguan kecemasan</strong>.
+        </p>
+      </div>
+      <dl class="alone__stats" data-reveal="stagger">
+        <div class="stat">
+          <dt class="label">Orang dengan gangguan kecemasan</dt>
+          <dd><span data-count="301">301</span><span class="stat__unit"> juta</span></dd>
+        </div>
+        <div class="stat">
+          <dt class="label">Dari populasi global</dt>
+          <dd><span data-count="4" data-count-suffix="%">4%</span></dd>
+        </div>
+        <p class="stat__src">Sumber: World Health Organization (WHO)</p>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 3. Manifesto -->
+  <section class="section manifesto">
+    <div class="wrap">
+      <p class="label">Kenapa kami ada</p>
+      <p class="manifesto__text" data-scrub-text>
+        Memahami diri sendiri tidak harus rumit, mahal, atau membosankan. Nacademy merangkum ilmu dari buku,
+        saran psikolog, dan praktisi healing menjadi guidebook infografis yang bisa kamu isi sendiri, pelan-pelan,
+        dari HP atau laptop. Supaya setiap orang punya pertolongan pertama untuk hatinya.
+      </p>
+    </div>
+  </section>
+
+  <!-- 4. Slide gallery (IG slide 02) -->
+  <section class="gallery" aria-labelledby="gallery-title">
+    <div class="wrap gallery__head">
+      <h2 id="gallery-title" class="gallery__title" data-split>Guidebook ala infografis <span class="serif">dan tidak membosankan</span></h2>
+      <a class="link" href={site.instagram} target="_blank" rel="noopener">Lihat di Instagram {site.instagramHandle} ↗</a>
+    </div>
+    <div class="gallery__rows" data-gallery>
+      <div class="gallery__row" data-gallery-row="1">
+        {repeat(rowA).map((src, i) => (
+          <img src={src} alt={i < rowA.length ? 'Konten Instagram Nacademy' : ''} aria-hidden={i >= rowA.length ? 'true' : undefined} loading="lazy" width="900" height="900" />
+        ))}
+      </div>
+      <div class="gallery__row" data-gallery-row="-1">
+        {repeat(rowB).map((src, i) => (
+          <img src={src} alt={i < rowB.length ? 'Konten Instagram Nacademy' : ''} aria-hidden={i >= rowB.length ? 'true' : undefined} loading="lazy" width="900" height="900" />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Pillars (IG slide 01) -->
+  <section class="section pillars">
+    <div class="wrap pillars__grid">
+      <div class="pillars__aside">
+        <p class="label">Yang membuat kami berbeda</p>
+        <h2 class="pillars__title" data-split>Dirancang supaya kamu <span class="serif">betah belajar.</span></h2>
+      </div>
+      <ul class="pillars__list">
+        {pillars.map((p) => (
+          <li class="pillar" data-reveal>
+            <span class="pillar__check" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+            <p><strong>{p.title}</strong> {p.rest}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6. Methods: horizontal journey -->
+  <section class="methods band-forest" data-methods>
+    <div class="methods__pin" data-methods-pin>
+      <div class="wrap methods__head">
+        <p class="label">Pendekatan</p>
+        <h2 class="methods__title">Ragam teknik <span class="serif">meringankan stress</span></h2>
+      </div>
+      <div class="methods__viewport">
+        <ol class="methods__track" data-methods-track>
+          {methods.map((m) => (
+            <li class="mcard">
+              <MethodGlyph shape={m.shape} />
+              <h3 class="mcard__name">{m.name}</h3>
+              <p class="mcard__line">{m.line}</p>
+            </li>
+          ))}
+          <li class="mcard mcard--end">
+            <p class="mcard__line">Pelajari cara kerja setiap teknik dan kapan memakainya.</p>
+            <a class="btn btn--lime" href="/pendekatan/">Lihat pendekatan <span class="arrow" aria-hidden="true">→</span></a>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Affirmation deck (IG slide 03) -->
+  <section class="section deck-sec">
+    <div class="wrap deck-sec__grid">
+      <div class="deck-sec__copy">
+        <p class="label">Coba sekarang</p>
+        <h2 class="deck-sec__title" data-split>Anxiety <span class="serif">Clue Card</span></h2>
+        <p class="lede" data-reveal>Cukup 1x klik dan dapatkan afirmasi secara acak untuk meringankan kecemasan.</p>
+        <p class="deck-sec__how" data-reveal>Gunakan setiap kecemasan hadir.</p>
+      </div>
+      <AffirmationDeck />
+    </div>
+  </section>
+
+  <!-- 8. Formats (IG slide 08) -->
+  <section class="section formats">
+    <div class="wrap">
+      <div class="formats__head">
+        <h2 class="formats__title" data-split>Fleksibel! <span class="serif">Pilih format favoritmu</span></h2>
+        <p class="lede" data-reveal>Desain yang <em>kekinian</em> akan menemani perjalananmu mengeksplorasi diri dalam format digital / cetak</p>
+      </div>
+      <ul class="formats__grid" data-reveal="stagger">
+        {formats.map((f, i) => (
+          <li class="fmt" style={`--i:${i}`}>
+            <div class="fmt__img"><img src={f.img} alt={`Guidebook Nacademy di ${f.label}`} loading="lazy" width="244" height="298" /></div>
+            <p class="fmt__label">{f.label}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 9. Works teaser -->
+  <section class="section works band-forest">
+    <div class="wrap works__grid">
+      <div class="works__copy">
+        <p class="label">Karya</p>
+        <h2 class="works__title" data-split>Tiga buku kecil untuk <span class="serif">hati yang lebih damai.</span></h2>
+        <p class="lede" data-reveal>Total 60++ halaman infografis, editable di hp/laptop &amp; printable.</p>
+        <a class="btn btn--lime" href="/karya/" data-magnetic>Lihat karya <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <div class="works__shelf" data-reveal="stagger">
+        <BookCover cover="first-aid" class="shelf-book b1" />
+        <BookCover cover="life-audit" class="shelf-book b2" />
+        <BookCover cover="clue-card" class="shelf-book b3" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Journal -->
+  <section class="section journal">
+    <div class="wrap">
+      <div class="journal__head">
+        <h2 class="journal__title" data-split>Dari jurnal</h2>
+        <a class="link" href="/jurnal/">Semua tulisan →</a>
+      </div>
+      <div class="journal__grid" data-reveal="stagger">
+        {posts.map((p) => (
+          <ArticleCard href={`/jurnal/${p.id}/`} {...p.data} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Closing (IG slide 13) -->
+  <section class="closing">
+    <div class="wrap closing__inner">
+      <p class="closing__pill" data-reveal>Mulai hari ini.</p>
+      <h2 class="closing__title" data-split>jadikan hati lebih damai dan percaya diri</h2>
+      <p class="lede closing__lede" data-reveal>
+        <strong>Semakin cepat memulai,</strong> semakin cepat kita belajar mengendalikan kecemasan sehari-hari untuk mendapatkan hati yang damai serta pikiran jernih
+      </p>
+      <div class="closing__cta" data-reveal>
+        <a class="btn" href={site.instagram} target="_blank" rel="noopener" data-magnetic>Ikuti {site.instagramHandle} <span class="arrow" aria-hidden="true">↗</span></a>
+        <a class="btn btn--ghost" href="/kontak/">Hubungi kami</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero { position: relative; }
+  .hero__stage {
+    position: relative;
+    min-height: min(100svh, 980px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: calc(96px + env(safe-area-inset-top, 0px));
+    padding-bottom: 72px;
+    overflow: hidden;
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    align-items: center;
+    gap: clamp(24px, 4vw, 64px);
+  }
+  .hero__copy { position: relative; z-index: 2; display: grid; gap: clamp(18px, 2.4vw, 28px); justify-items: start; min-width: 0; }
+  .hero__title { font-size: var(--t-hero); letter-spacing: -0.055em; line-height: 0.92; }
+  .hero__pill {
+    background: var(--forest);
+    color: var(--on-forest);
+    font-weight: 700;
+    font-size: clamp(1rem, 1.6vw, 1.35rem);
+    padding: 0.5em 1em;
+    border-radius: 12px;
+    letter-spacing: -0.01em;
+  }
+  .hero__orbwrap {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    will-change: transform;
+  }
+  .orb {
+    position: relative;
+    width: clamp(220px, 32vw, 440px);
+    aspect-ratio: 1;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+  }
+  .orb__core {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--lime);
+    transform: scale(0.82);
+  }
+  .orb__ring {
+    position: absolute;
+    inset: -8%;
+    border-radius: 50%;
+    border: 1.5px dashed color-mix(in srgb, var(--ink) 22%, transparent);
+    animation: spin 60s linear infinite;
+  }
+  .orb__label { position: relative; display: grid; justify-items: center; gap: 2px; color: var(--on-lime); }
+  .orb__phase { font-family: var(--f-serif); font-style: italic; font-size: clamp(1.1rem, 1.8vw, 1.5rem); }
+  .orb__count { font-family: var(--f-display); font-weight: 800; font-size: clamp(2.6rem, 5vw, 4.4rem); letter-spacing: -0.05em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .hero__hint { position: absolute; left: 0; right: 0; bottom: 28px; text-align: center; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- Alone (lime) ---------- */
+  .alone {
+    background: var(--lime);
+    color: var(--on-lime);
+    padding-block: clamp(96px, 14vw, 180px);
+  }
+  .alone__grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(40px, 6vw, 96px); align-items: end; }
+  .alone__copy { display: grid; gap: 28px; min-width: 0; }
+  .alone__title { font-size: var(--t-1); letter-spacing: -0.05em; }
+  .alone__text { font-size: var(--t-3); line-height: 1.45; max-width: 36ch; }
+  .alone__stats { margin: 0; display: grid; gap: 28px; min-width: 0; }
+  .stat { border-top: 1.5px solid currentColor; padding-top: 14px; display: grid; gap: 6px; }
+  .stat dt { color: inherit; opacity: 0.7; }
+  .stat dd { margin: 0; font-family: var(--f-display); font-weight: 800; font-size: clamp(3.4rem, 8vw, 7rem); letter-spacing: -0.06em; line-height: 0.95; font-variant-numeric: tabular-nums; }
+  .stat__unit { font-size: 0.4em; letter-spacing: -0.03em; }
+  .stat__src { font-size: var(--t-small); opacity: 0.7; }
+
+  /* ---------- Manifesto ---------- */
+  .manifesto .wrap { display: grid; gap: 28px; }
+  .manifesto__text {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: var(--t-2);
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+    max-width: 24ch;
+  }
+
+  /* ---------- Gallery ---------- */
+  .gallery { padding-bottom: var(--section); overflow: hidden; }
+  .gallery__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: clamp(40px, 6vw, 72px); }
+  .gallery__title { font-size: var(--t-2); max-width: 18ch; }
+  .gallery__title .serif { color: var(--ink-soft); }
+  .gallery__rows { display: grid; gap: clamp(12px, 1.6vw, 20px); transform: rotate(-3deg) scale(1.06); }
+  .gallery__row { display: flex; gap: clamp(12px, 1.6vw, 20px); width: max-content; margin-left: -12vw; will-change: transform; }
+  .gallery__row img {
+    width: clamp(200px, 24vw, 340px);
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 18px;
+    background: var(--paper-2);
+  }
+
+  /* ---------- Pillars ---------- */
+  .pillars__grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(40px, 6vw, 96px); align-items: start; }
+  .pillars__aside { position: sticky; top: 120px; display: grid; gap: 20px; min-width: 0; }
+  .pillars__title { font-size: var(--t-2); }
+  .pillars__title .serif { color: var(--ink-soft); }
+  .pillars__list { list-style: none; margin: 0; padding: 0; display: grid; }
+  .pillar {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+    align-items: start;
+    padding-block: clamp(24px, 3.4vw, 40px);
+    border-bottom: 1px solid var(--line);
+    font-size: var(--t-3);
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+  }
+  .pillar:first-child { border-top: 1px solid var(--line); }
+  .pillar p { min-width: 0; color: var(--ink-soft); }
+  .pillar strong { color: var(--ink); font-weight: 700; }
+  .pillar__check { width: 40px; height: 40px; border-radius: 50%; background: var(--lime); color: var(--on-lime); display: grid; place-items: center; }
+  .pillar__check svg { width: 22px; }
+
+  /* ---------- Methods ---------- */
+  .methods { overflow: hidden; }
+  .methods__pin { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; gap: clamp(36px, 5vw, 64px); padding-block: clamp(80px, 10vw, 120px); }
+  .methods__title { font-size: var(--t-1); letter-spacing: -0.05em; max-width: 14ch; }
+  .methods__title .serif { color: var(--lime); }
+  .methods__head { display: grid; gap: 18px; }
+  .methods__viewport { overflow: visible; }
+  .methods__track {
+    list-style: none;
+    margin: 0;
+    display: flex;
+    gap: clamp(14px, 2vw, 24px);
+    width: max-content;
+    padding-left: max(var(--gutter), calc((100vw - var(--max)) / 2));
+    padding-right: max(var(--gutter), calc((100vw - var(--max)) / 2));
+    will-change: transform;
+  }
+  .mcard {
+    width: clamp(270px, 28vw, 380px);
+    min-height: clamp(320px, 34vw, 420px);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--on-forest) 7%, transparent);
+    border: 1px solid color-mix(in srgb, var(--on-forest) 14%, transparent);
+    padding: clamp(24px, 2.6vw, 36px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    color: var(--on-forest);
+  }
+  .mcard__name { font-size: clamp(1.6rem, 2.6vw, 2.2rem); margin-top: auto; letter-spacing: -0.04em; }
+  .mcard__line { color: color-mix(in srgb, var(--on-forest) 72%, transparent); line-height: 1.5; }
+  .mcard--end { justify-content: flex-end; align-items: flex-start; background: transparent; border-style: dashed; }
+  .mcard--end .mcard__line { font-size: var(--t-3); color: var(--on-forest); line-height: 1.3; margin-bottom: 12px; }
+
+  /* ---------- Deck ---------- */
+  .deck-sec__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px, 6vw, 96px); align-items: center; }
+  .deck-sec__copy { display: grid; gap: 22px; justify-items: start; min-width: 0; }
+  .deck-sec__title { font-size: var(--t-1); letter-spacing: -0.05em; }
+  .deck-sec__title .serif { display: block; color: var(--ink-soft); }
+  .deck-sec__how { font-weight: 600; }
+
+  /* ---------- Formats ---------- */
+  .formats__head { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: end; margin-bottom: clamp(40px, 6vw, 80px); }
+  .formats__title { font-size: var(--t-2); }
+  .formats__title .serif { display: block; color: var(--ink-soft); }
+  .formats__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(12px, 1.6vw, 20px); }
+  .fmt { display: grid; gap: 14px; min-width: 0; }
+  .fmt:nth-child(even) { margin-top: clamp(0px, 5vw, 64px); }
+  .fmt__img { border-radius: 20px; overflow: hidden; aspect-ratio: 244 / 298; background: var(--paper-2); }
+  .fmt__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+  .fmt:hover .fmt__img img { transform: scale(1.05); }
+  .fmt__label { font-weight: 700; letter-spacing: -0.01em; }
+
+  /* ---------- Works ---------- */
+  .works__grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(48px, 6vw, 96px); align-items: center; }
+  .works__copy { display: grid; gap: 22px; justify-items: start; min-width: 0; }
+  .works__title { font-size: var(--t-2); }
+  .works__title .serif { color: var(--lime); }
+  .works__shelf { display: flex; justify-content: center; align-items: flex-end; gap: clamp(8px, 2vw, 24px); padding-block: 24px; min-width: 0; }
+  .works__shelf :global(.shelf-book) { --w: clamp(120px, 15vw, 210px); }
+  .works__shelf :global(.b2) { transform: translateY(-24px); }
+
+  /* ---------- Journal ---------- */
+  .journal__head { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: clamp(32px, 4vw, 56px); }
+  .journal__title { font-size: var(--t-2); }
+  .journal__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 1.6vw, 20px); }
+
+  /* ---------- Closing ---------- */
+  .closing { padding-block: clamp(120px, 18vw, 240px); text-align: center; }
+  .closing__inner { display: grid; justify-items: center; gap: clamp(20px, 2.6vw, 32px); }
+  .closing__pill {
+    background: var(--forest); color: var(--on-forest);
+    font-family: var(--f-display); font-weight: 800;
+    font-size: clamp(1.6rem, 3.6vw, 3rem); letter-spacing: -0.04em;
+    padding: 0.15em 0.45em; border-radius: 12px;
+  }
+  .closing__title { font-size: var(--t-1); letter-spacing: -0.05em; max-width: 15ch; }
+  .closing__lede { max-width: 44ch; color: var(--ink-soft); }
+  .closing__lede strong { color: var(--ink); }
+  .closing__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 8px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px) {
+    .alone__grid, .pillars__grid, .deck-sec__grid, .works__grid, .formats__head { grid-template-columns: 1fr; }
+    .pillars__aside { position: static; }
+    .formats__grid { grid-template-columns: repeat(2, 1fr); }
+    .journal__grid { grid-template-columns: 1fr; }
+    .journal__grid :global(.card) { min-height: 280px; }
+  }
+  @media (max-width: 760px) {
+    .hero__grid { grid-template-columns: 1fr; }
+    .hero__stage { justify-content: flex-start; min-height: auto; padding-bottom: 96px; }
+    .hero__orbwrap { justify-self: center; margin-top: 12px; }
+    .orb { width: min(66vw, 300px); }
+    .methods__pin { min-height: auto; }
+    .methods__viewport { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .methods__viewport::-webkit-scrollbar { display: none; }
+    .mcard { scroll-snap-align: center; }
+    .works__shelf :global(.shelf-book) { --w: 28vw; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .orb__ring { animation: none; }
+  }
+</style>
+
+<script>
+  import { motion, onReady } from '../scripts/motion';
+  const { gsap, ScrollTrigger, reduce } = motion;
+
+  /* ---- Hero intro (page load) ---- */
+  if (!reduce) {
+    gsap.from('.hero__title .reveal-line > span', { yPercent: 110, duration: 1.4, ease: 'expo.out', stagger: 0.1, delay: 0.15 });
+    gsap.from('[data-hero-pill], .hero__eyebrow', { y: 20, opacity: 0, duration: 1, ease: 'expo.out', delay: 0.55, stagger: 0.08 });
+    gsap.from('[data-orb]', { scale: 0.4, opacity: 0, duration: 1.6, ease: 'expo.out', delay: 0.3 });
+  }
+
+  /* ---- Breathing loop: 4 in · 4 hold · 6 out ---- */
+  const core = document.querySelector<HTMLElement>('[data-orb-core]');
+  const phaseEl = document.querySelector<HTMLElement>('[data-orb-phase]');
+  const countEl = document.querySelector<HTMLElement>('[data-orb-count]');
+  const phases = [
+    { label: 'Tarik napas', secs: 4, scale: 1 },
+    { label: 'Tahan', secs: 4, scale: 1 },
+    { label: 'Hembuskan', secs: 6, scale: 0.82 },
+  ];
+  let breath: gsap.core.Timeline | null = null;
+  if (core && phaseEl && countEl && !reduce) {
+    breath = gsap.timeline({ repeat: -1 });
+    phases.forEach((p) => {
+      breath!.to(core, {
+        scale: p.scale,
+        duration: p.secs,
+        ease: 'sine.inOut',
+        onStart: () => { phaseEl.textContent = p.label; },
+        onUpdate() {
+          countEl.textContent = String(Math.max(1, Math.ceil(p.secs * (1 - this.progress()))));
+        },
+      });
+    });
+    document.querySelector('[data-orb]')?.addEventListener('click', () => breath!.restart());
+  }
+
+  onReady(() => {
+    if (reduce) return;
+    const mm = gsap.matchMedia();
+
+    /* ---- Hero → lime: the dot swallows the screen ---- */
+    mm.add('(min-width: 761px)', () => {
+      const wrap = document.querySelector<HTMLElement>('[data-orb-scale]')!;
+      const orb = document.querySelector<HTMLElement>('[data-orb]')!;
+      const getScale = () => {
+        const r = orb.getBoundingClientRect();
+        return (Math.hypot(innerWidth, innerHeight) / (r.width * 0.82)) * 1.15;
+      };
+      const getShift = () => {
+        const r = orb.getBoundingClientRect();
+        return { x: innerWidth / 2 - (r.left + r.width / 2), y: innerHeight / 2 - (r.top + r.height / 2) };
+      };
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: '+=110%', scrub: 0.8, pin: true, invalidateOnRefresh: true },
+      });
+      tl.to('[data-hero-copy]', { yPercent: -30, opacity: 0, ease: 'power2.in', duration: 0.4 }, 0)
+        .to('[data-hero-hint], .orb__ring, .orb__label', { opacity: 0, duration: 0.15 }, 0)
+        .to(wrap, { x: () => getShift().x, y: () => getShift().y, ease: 'power1.inOut', duration: 0.5 }, 0)
+        .to(wrap, { scale: getScale, ease: 'power2.in', duration: 1 }, 0.05);
+    });
+
+    /* ---- Gallery rows drift with scroll ---- */
+    document.querySelectorAll<HTMLElement>('[data-gallery-row]').forEach((row) => {
+      const dir = Number(row.dataset.galleryRow);
+      gsap.fromTo(row, { xPercent: dir > 0 ? 0 : -25 }, {
+        xPercent: dir > 0 ? -25 : 0,
+        ease: 'none',
+        scrollTrigger: { trigger: '[data-gallery]', start: 'top bottom', end: 'bottom top', scrub: 0.6 },
+      });
+    });
+
+    /* ---- Methods: vertical scroll drives a horizontal track ---- */
+    mm.add('(min-width: 761px)', () => {
+      const track = document.querySelector<HTMLElement>('[data-methods-track]')!;
+      const dist = () => Math.max(0, track.scrollWidth - innerWidth);
+      gsap.to(track, {
+        x: () => -dist(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '[data-methods]',
+          start: 'top top',
+          end: () => `+=${dist()}`,
+          pin: '[data-methods-pin]',
+          scrub: 0.8,
+          invalidateOnRefresh: true,
+        },
+      });
+    });
+
+    /* ---- Book shelf: subtle lift on scroll ---- */
+    gsap.from('.works__shelf .book__inner', {
+      rotateY: -50, y: 60, ease: 'expo.out', duration: 1.6, stagger: 0.12,
+      scrollTrigger: { trigger: '.works__shelf', start: 'top 80%', once: true },
+    });
+
+    ScrollTrigger.refresh();
+  });
+</script>
