@@ -19,6 +19,10 @@ const {
   publishedTime,
 } = Astro.props;
 
+// Builds on Vercel are staging; the Domainesia build (GitHub Actions) is production.
+const isStaging = process.env.VERCEL === '1' || process.env.PUBLIC_SITE_ENV === 'staging';
+const deployLabel = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? '';
+
 const fullTitle = title ? `${title} · Nacademy` : 'Nacademy — Kendalikan stres dan kecemasan';
 const canonical = new URL(Astro.url.pathname, site.url).href;
 const ogImage = new URL(image, site.url).href;
@@ -40,6 +44,7 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {isStaging && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -82,6 +87,9 @@ const jsonLd = {
     </main>
     <Footer />
     <div class="curtain" data-curtain aria-hidden="true"></div>
+    {isStaging && (
+      <p class="staging-badge" aria-hidden="true">Staging{deployLabel && ` · ${deployLabel}`}</p>
+    )}
     <script>
       import '../scripts/motion';
     </script>

@@ -1,0 +1,68 @@
+# Production = nacademy.id on Domainesia (cPanel add-on domain), via FTP.
+#
+# Runs only when you decide to ship:
+#   - Actions tab → "Deploy production" → Run workflow, or
+#   - push a version tag:  git tag v1.0.0 && git push origin v1.0.0
+#
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   FTP_SERVER       e.g. ftp.nacademy.id  (or the server host from cPanel → FTP Accounts)
+#   FTP_USERNAME     FTP account created for the add-on domain
+#   FTP_PASSWORD
+#   FTP_SERVER_DIR   document root of the add-on domain, ending with "/", e.g. /public_html/nacademy.id/
+# Optional repository variables:
+#   PUBLIC_FORM_ENDPOINT, PUBLIC_TURNSTILE_SITE_KEY   (contact form, see README)
+#   FTP_PROTOCOL     ftps (default) or ftp
+
+name: Deploy production
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://nacademy.id
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npx astro check
+
+      - name: Build
+        run: npm run build
+        env:
+          PUBLIC_SITE_ENV: production
+          PUBLIC_FORM_ENDPOINT: ${{ vars.PUBLIC_FORM_ENDPOINT }}
+          PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
+
+      - name: Guard against shipping a staging build
+        run: |
+          if grep -q 'class="staging-badge"' dist/index.html || grep -q 'noindex' dist/index.html; then
+            echo "dist/ looks like a staging build; refusing to deploy" && exit 1
+          fi
+          test -f dist/.htaccess
+
+      - name: Upload to Domainesia
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          local-dir: ./dist/
+          # Only changed files are uploaded; files removed from dist/ are removed on the server.
+          dangerous-clean-slate: false

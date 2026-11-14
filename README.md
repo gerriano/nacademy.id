@@ -3,8 +3,8 @@
 Website brand Nacademy: guidebook interaktif ala infografis untuk mengenali dan mengendalikan stres serta kecemasan.
 
 - **Framework:** Astro (static output), GSAP + ScrollTrigger + SplitText, Lenis smooth scroll
-- **Staging:** Vercel (auto-deploy setiap push)
-- **Production:** Domainesia, add-on domain, upload via FTP
+- **Staging:** Vercel, otomatis setiap push → https://nacademy-id.vercel.app
+- **Production:** Domainesia (add-on domain), dirilis manual via GitHub Actions + FTP → https://nacademy.id
 - **Form kontak:** Cloudflare Worker + Turnstile + Email Routing (`worker/`)
 
 ## Menjalankan lokal
@@ -37,26 +37,59 @@ scripts/build-artifact.mjs  versi website untuk Artifact review di Claude
 
 Animasi menghormati `prefers-reduced-motion`; tanpa JavaScript semua konten tetap terbaca.
 
-## Staging (Vercel)
+## Alur rilis: staging → production
 
-Project Vercel terhubung ke repo GitHub ini. Setiap push otomatis membuat deployment.
-Framework preset: **Astro**, build command `npm run build`, output `dist`.
+```
+push ke GitHub ──► Vercel build ──► https://nacademy-id.vercel.app   (STAGING, otomatis)
+                                        │  cek di HP & desktop, beri komentar
+                                        ▼
+tag v1.x.x / tombol "Run workflow" ──► GitHub Actions build ──► FTP ──► https://nacademy.id   (PRODUCTION)
+```
 
-Environment variables (Project → Settings → Environment Variables):
+Production **tidak pernah** ter-update otomatis hanya karena ada push. Yang naik ke production adalah commit yang sudah dicek di staging, dan Anda sendiri yang memicunya.
+
+| | Staging | Production |
+| --- | --- | --- |
+| Host | Vercel | Domainesia (cPanel add-on domain) |
+| URL | nacademy-id.vercel.app | nacademy.id |
+| Kapan update | setiap push | saat tag `v*` di-push atau workflow dijalankan manual |
+| Google | `noindex` (header + meta), tidak bersaing dengan production | diindeks, `robots.txt` + sitemap |
+| Penanda | badge "Staging · <commit>" di pojok kiri bawah | tidak ada |
+
+### Staging (Vercel)
+
+Project `nacademy-id` di Vercel (team Gerriano) terhubung ke repo ini; konfigurasi build ada di `vercel.json`.
+Environment variables (Project → Settings → Environment Variables), isi setelah form Cloudflare siap:
 
 | Nama | Isi |
 | --- | --- |
 | `PUBLIC_FORM_ENDPOINT` | URL Worker, mis. `https://nacademy-contact.<akun>.workers.dev` |
 | `PUBLIC_TURNSTILE_SITE_KEY` | Site key Turnstile |
 
-## Production (Domainesia, FTP)
+### Production (Domainesia via GitHub Actions)
 
-1. `npm run build` dengan `.env` berisi dua variabel di atas (lihat `.env.example`).
-2. Di cPanel Domainesia: **Domains → Addon Domain** → `nacademy.id`, catat document root (mis. `public_html/nacademy.id`).
-3. Upload **isi** folder `dist/` (termasuk `.htaccess`) ke document root tersebut via FTP (FileZilla / `lftp mirror -R dist/ <docroot>`).
-4. Aktifkan SSL (AutoSSL / Let's Encrypt) di cPanel.
+Persiapan sekali saja:
 
-> Karena DNS nanti dipegang Cloudflare (untuk Email Routing), di Cloudflare buat record `A nacademy.id → IP server Domainesia` dan `CNAME www → nacademy.id`. Set SSL/TLS mode ke **Full**.
+1. cPanel Domainesia → **Domains / Addon Domains** → tambahkan `nacademy.id`. Catat *document root* (mis. `/public_html/nacademy.id/`).
+2. cPanel → **FTP Accounts** → buat akun FTP khusus yang direktorinya dibatasi ke document root itu. Jangan pakai akun cPanel utama.
+3. GitHub repo → **Settings → Secrets and variables → Actions**:
+   - *Secrets*: `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`, `FTP_SERVER_DIR` (diakhiri `/`. Jika akun FTP sudah dibatasi ke document root, isi `./`)
+   - *Variables* (opsional): `PUBLIC_FORM_ENDPOINT`, `PUBLIC_TURNSTILE_SITE_KEY`, `FTP_PROTOCOL` (`ftps` default; isi `ftp` hanya jika server menolak FTPS)
+4. (Disarankan) **Settings → Environments → production** → aktifkan *Required reviewers* supaya setiap deploy production butuh klik persetujuan.
+5. cPanel → **SSL/TLS Status** → jalankan AutoSSL untuk `nacademy.id`.
+
+Merilis versi baru:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+atau GitHub → **Actions → Deploy production → Run workflow**. Workflow menjalankan `astro check`, build mode production, menolak deploy bila hasil build ternyata build staging, lalu meng-upload hanya file yang berubah.
+
+Rollback: jalankan workflow pada tag versi sebelumnya (Run workflow → pilih tag).
+
+> Bila DNS dipindah ke Cloudflare (untuk Email Routing): buat record `A nacademy.id → IP server Domainesia` dan `CNAME www → nacademy.id`, lalu set SSL/TLS mode ke **Full** (bukan Flexible, karena Flexible membuat redirect loop dengan `.htaccess`).
 
 ## Form kontak (Cloudflare)
 
